@@ -6,6 +6,7 @@ public class MainTest {
 		scrape.setDateRandom("15-09-2022");
 //		scrape.handleScrape(scrape.BAC);
 //		scrape.handleScrape(scrape.TRUNG);
-		scrape.handleScrape(scrape.NAM);
+		//scrape.handleScrape(scrape.NAM);
+		scrape.handleScrape2(scrape.NAM);
 	}
 }

@@ -3,6 +3,8 @@ package test;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -108,7 +110,50 @@ public class WebScrape {
 			}
 		}
 	}
+	public static void handleScrape2(String region) {
+		if (listDate == null) {
+			System.out.println("Chua chon ngay lay ket qua xo so");
+		} else {
+			try {
+				for (String dmy : listDate) {
+					input = new URL(getURL(region) + dmy).openStream();
+					Document doc = Jsoup.parse(input, "utf-8", getURL(region) + dmy);
 
+					// Lấy bảng danh sách kết quả
+					Elements table = doc.getElementsByClass("table-tructiep").select("table");
+					if (table.html().equals("")) {
+						table = doc.getElementsByClass("result-box").select("table");
+					}
+					// Lấy các tỉnh
+					Elements provinces = table.select("thead tr th:not(:first-child)");
+					if (provinces.html().equals("") || provinces.html() == null) {
+						test = new Lottery();
+						test.setProvince("");
+						listLottery.add(test);
+					} else {
+						provinces.forEach(element -> {
+							test = new Lottery();
+							test.setProvince(element.html());
+							listLottery.add(test);
+						});
+					}
+
+					Elements elements = table.select("tbody tr");
+					handleExecuteData(listLottery, elements, dmy);
+					Path path = Paths.get("fileCSV");
+					String fileName = "data_lotteris."+GetDate.getCurrentDate()+"_datawarehouse-locahost.csv";
+					WriteFileCSV.write(path,path.toAbsolutePath()+"\\"+fileName , new ArrayList<>(listLottery));
+					listLottery.clear();
+					input.close();
+				}
+
+			} catch (IOException e) {
+				System.out.println("Lỗi khi truy cập đường dẫn url");
+				e.printStackTrace();
+			}
+		}
+	}
+	
 	public static void handleExecuteData(List<Lottery> listLottery, Elements elements, String date) {
 		elements.forEach(e -> {
 			setPrize(e, listLottery);
