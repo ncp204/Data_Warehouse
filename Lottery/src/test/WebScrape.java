@@ -97,7 +97,8 @@ public class WebScrape {
 					Elements elements = table.select("tbody tr");
 					handleExecuteData(listLottery, elements, dmy);
 
-					ExportFileExcel.exportExcel(dmy, listLottery, region);
+//					ExportFileExcel.exportExcel(dmy, listLottery, region);
+					WriteFileCSV.write(listLottery, region, dmy);
 					listLottery.clear();
 					input.close();
 				}

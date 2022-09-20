@@ -1,12 +1,14 @@
 package test;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.List;
 
 public class WriteFileCSV {
 	public static void init(Path path) {
@@ -16,9 +18,27 @@ public class WriteFileCSV {
            e.printStackTrace();
         }
     }
-    public static void write(Path path, String dirSource, ArrayList<Lottery> lotteries) throws IOException {
-       // init(path);     
-        try (BufferedWriter bw = new BufferedWriter( new OutputStreamWriter(new FileOutputStream(dirSource)))) {
+    public static void write(List<Lottery> listLottery, String region, String date) throws IOException {
+    	switch (region.toUpperCase()) {
+		case "BAC":
+			region = "XSMB";
+			break;
+		case "TRUNG":
+			region = "XSMT";
+			break;
+		case "NAM":
+			region = "XSMN";
+			break;
+		default:
+			region = "KQXS";
+			break;
+		}
+    	
+    	String dest = "fileCSV/data_lotteries_" + region + "." + date + "_datawarehouse-localhost.csv";
+    	File file = new File(dest);
+       // init(path);   
+    	
+        try (BufferedWriter bw = new BufferedWriter( new OutputStreamWriter(new FileOutputStream(file)))) {
             bw.write("Company");
             bw.write(",");
             bw.write("Province");
@@ -42,17 +62,15 @@ public class WriteFileCSV {
             bw.write("Prize 7");
             bw.write(",");
             bw.write("Prize 8");
-            bw.write(",");
-            bw.write("Info Prize");
             bw.newLine();
-            for (Lottery lottery : lotteries) {
-                bw.write("");
+            for (Lottery lottery : listLottery) {
+                bw.write(region);
                 bw.write(",");
                 bw.write(lottery.getProvince());
                 bw.write(",");
                 bw.write(lottery.getDate());
                 bw.write(",");
-                bw.write("");
+                bw.write(lottery.getPrizeDB());
                 bw.write(",");
                 bw.write(lottery.getPrize1());
                 bw.write(",");
@@ -73,7 +91,6 @@ public class WriteFileCSV {
                 ;
             }
         }
-        System.out.println("Write file to "+dirSource+" success");
+        System.out.println("Tao file thanh cong voi duong dan: "+file.getAbsolutePath());
     }
 }
-
